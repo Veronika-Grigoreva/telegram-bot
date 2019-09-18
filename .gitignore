@@ -6,6 +6,7 @@
 /.idea
 /.vagrant
 /.discovery
+/logs
 .env
 .env.backup
 .phpunit.result.cache
