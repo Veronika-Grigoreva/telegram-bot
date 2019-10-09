@@ -21,6 +21,10 @@ class ConversationController extends Controller
         $bot->startConversation(new DefaultConversation);
     }
 
+    /**
+     * @param $bot
+     * @return void
+     */
     public function bye($bot)
     {
         $userName = $bot->getUser()->getUsername();
@@ -28,9 +32,9 @@ class ConversationController extends Controller
         if (empty($userName)) {
             $name = $bot->getUser()->getFirstName();
 
-            $bot->reply('Bye, ' . $name);
+            $bot->reply('До скорого, ' . $name);
         } else {
-            $bot->reply('Bye, @' . $userName);
+            $bot->reply('Пока, @' . $userName);
         }
 
     }

@@ -16,6 +16,6 @@ class FallbackController extends Controller
      */
     public function index($bot)
     {
-        $bot->reply('Sorry, I did not understand these command. Try: \'Start Conversation\'');
+        $bot->reply('Я тебя не понимаю:( Попробуй \'Старт\'');
     }
 }

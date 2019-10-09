@@ -13,6 +13,8 @@ class DogService
 {
     const RANDOM_ENDPOINT = 'https://dog.ceo/api/breeds/image/random';
     const BREED_ENDPOINT = 'https://dog.ceo/api/breed/%s/images/random';
+    const API_KEY = 'trnsl.1.1.20190926T211623Z.603dcfac0a529e09.8e794cc99476245e2732ae3757e381b0a046dd38';
+    const TRANSLATE_ENDPOINT = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . self::API_KEY . '&text=%s&lang=en';
 
     /**
      * Guzzle client.
@@ -45,7 +47,7 @@ class DogService
 
             return $response->message;
         } catch (Exception $e) {
-            return 'An unexpected error occurred. Please try again later.';
+            return 'Произошла ошибка, повтори попытку позже.';
         }
     }
 
@@ -58,7 +60,10 @@ class DogService
     public function byBreed($breed)
     {
         try {
-            $endpoint = sprintf(self::BREED_ENDPOINT, $breed);
+            $breed_translate = json_decode(
+                $this->client->get(sprintf(self::TRANSLATE_ENDPOINT, $breed))->getBody()
+            );
+            $endpoint = sprintf(self::BREED_ENDPOINT, strtolower($breed_translate->text[0]));
 
             $response = json_decode(
                 $this->client->get($endpoint)->getBody()
@@ -66,7 +71,7 @@ class DogService
 
             return $response->message;
         } catch (Exception $e) {
-            return 'Sorry, I could\'t get you any photos from ' . $breed . '.' . ' Please try with a different breed.';
+            return 'Извини, фото собакена ' . $breed . ' не найдено:( Попробуй другую породу.';
         }
     }
 }

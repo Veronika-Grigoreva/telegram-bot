@@ -3,6 +3,7 @@
 namespace App\Conversations;
 
 use App\Services\DogService;
+use App\Services\WeatherService;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
@@ -16,10 +17,12 @@ class DefaultConversation extends Conversation
 {
     public function defaultQuestion()
     {
-        $question = Question::create('Huh - you woke me up. What do you need?')
+        $question = Question::create('Так, чего тебе хочется?')
             ->addButtons([
-                Button::create('Random dog photo')->value('random'),
-                Button::create('A photo by breed')->value('breed'),
+                Button::create('Рандомное фото собакена')->value('random'),
+                Button::create('Фото собакена по породе')->value('breed'),
+                Button::create('Погода сейчас')->value('weather'),
+//                Button::create('Рандомный фильм')->value('film'),
             ]);
 
         return $this->ask($question, function (Answer $answer) {
@@ -28,8 +31,14 @@ class DefaultConversation extends Conversation
                    case 'random':
                        $this->say((new DogService())->random());
                        break;
-                   case 'breed';
+                   case 'breed':
                        $this->askForBreedName();
+                       break;
+                   case 'weather':
+                       $this->askForWeatherInCity();
+                       break;
+                   case 'film':
+                       $this->askForFilmGenre();
                        break;
                }
            }
@@ -43,10 +52,24 @@ class DefaultConversation extends Conversation
      */
     public function askForBreedName()
     {
-        $this->ask('What\'s the breed name?', function (Answer $answer) {
+        $this->ask('Порода собакена?', function (Answer $answer) {
            $name = $answer->getText();
 
             $this->say((new DogService())->byBreed($name));
+        });
+    }
+
+    /**
+     * Ask for the city and send the weather.
+     *
+     * @return void
+     */
+    public function askForWeatherInCity()
+    {
+        $this->ask('Какой город?', function (Answer $answer) {
+           $city = $answer->getText();
+
+           $this->say((new WeatherService())->byCity($city));
         });
     }
 
